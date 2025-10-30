@@ -1,9 +1,21 @@
-import React from 'react';
+import React from "react";
+import type { KanbanTask } from "./KanbanBoard.types";
 
-const KanbanCard: React.FC = () => {
+interface Props {
+  task: KanbanTask;
+}
+
+const KanbanCard: React.FC<Props> = ({ task }) => {
   return (
-    <div className="bg-white border rounded-lg p-2 shadow-sm mb-2">
-      Task Card
+    <div className="bg-white border rounded-lg p-3 shadow-sm hover:shadow-md transition-shadow cursor-pointer">
+      <h4 className="font-medium text-sm text-neutral-900 mb-1">
+        {task.title}
+      </h4>
+      {task.description && (
+        <p className="text-xs text-neutral-600 line-clamp-2">
+          {task.description}
+        </p>
+      )}
     </div>
   );
 };
