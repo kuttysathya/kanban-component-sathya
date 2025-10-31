@@ -1,6 +1,9 @@
 import React from "react";
 import KanbanCard from "./KanbanCard";
-import type { KanbanColumn as KanbanColumnType, KanbanTask } from "./KanbanBoard.types";
+import type {
+  KanbanColumn as KanbanColumnType,
+  KanbanTask,
+} from "./KanbanBoard.types";
 
 interface Props {
   column: KanbanColumnType;
@@ -9,20 +12,20 @@ interface Props {
 
 const KanbanColumn: React.FC<Props> = ({ column, tasks }) => {
   return (
-    <div className="min-w-[300px] bg-neutral-100 rounded-xl p-3 shadow-sm flex flex-col max-h-[90vh]">
-      <h3 className="font-semibold text-neutral-800 mb-3">
-        {column.title} ({tasks.length})
-      </h3>
-
-      <div className="flex flex-col gap-2 overflow-y-auto">
-        {tasks.map((task) => (
-          <KanbanCard key={task.id} task={task} />
-        ))}
-
-        {tasks.length === 0 && (
-          <div className="text-sm text-neutral-500 p-2 italic">
-            No tasks yet
-          </div>
+    <div className="min-w-[300px] bg-neutral-50 border border-neutral-200 rounded-xl p-4 shadow-sm 
+      mr-4 flex flex-col transition-all hover:shadow-md focus-within:ring-2 focus-within:ring-primary-500">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="font-semibold text-neutral-800 text-sm">
+          {column.title}{" "}
+          <span className="text-neutral-500">({tasks.length})</span>
+        </h3>
+      </div>
+      
+      <div className="space-y-3 overflow-y-auto max-h-[70vh] pr-2">
+        {tasks.length > 0 ? (
+          tasks.map((task) => <KanbanCard key={task.id} task={task} />)
+        ) : (
+          <p className="text-xs text-neutral-400 italic">No tasks yet</p>
         )}
       </div>
     </div>

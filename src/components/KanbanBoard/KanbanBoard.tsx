@@ -9,8 +9,11 @@ interface Props {
 
 const KanbanBoard: React.FC<Props> = ({ columns, tasks }) => {
   return (
-    <div className="w-full overflow-x-auto px-4 py-6">
-      <div className="flex gap-4 min-w-max">
+    <div className="p-6 bg-neutral-50 min-h-screen">
+      <h2 className="text-xl font-semibold text-green-900 mb-4">
+        Kanban Board
+      </h2>
+      <div className="flex gap-4 overflow-x-auto pb-4">
         {columns.map((column) => (
           <KanbanColumn
             key={column.id}
