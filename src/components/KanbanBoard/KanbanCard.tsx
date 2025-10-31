@@ -3,21 +3,37 @@ import type { KanbanTask } from "./KanbanBoard.types";
 
 interface Props {
   task: KanbanTask;
+  onDragStart?: (task: KanbanTask, columnId: string) => void;
+  columnId: string;
+  isDragging?: boolean;
 }
 
-const KanbanCard: React.FC<Props> = ({ task }) => {
+const KanbanCard: React.FC<Props> = ({ task, onDragStart, columnId, isDragging }) => {
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+  if (e.key === " " || e.key === "Enter") {
+    e.preventDefault();
+    onDragStart?.(task, columnId);
+  }
+};
+
   return (
     <div
+      draggable
+      onDragStart={() => onDragStart?.(task, columnId)}
+      onKeyDown={handleKeyDown}
       className={`
         bg-white rounded-lg border border-neutral-200 p-3 mb-3 shadow-sm
-        transition-all cursor-grab active:cursor-grabbing
-        hover:shadow-md active:scale-[0.98] focus-within:ring-2 focus-within:ring-primary-500
-
+        transition-all cursor-grab active:cursor-grabbing hover:shadow-md active:scale-[0.98] focus-within:ring-2 focus-within:ring-primary-500
+        ${isDragging ? "opacity-40 scale-[0.98] rotate-[1deg] shadow-lg" : ""}
         ${task.priority === "high" && "border-l-4 border-orange-500"}
         ${task.priority === "urgent" && "border-l-4 border-red-500"}
         ${task.priority === "medium" && "border-l-4 border-yellow-500"}
         ${task.priority === "low" && "border-l-4 border-blue-500"}
       `}
+      role="button"
+      tabIndex={0}
+      aria-label={`${task.title}, priority ${task.priority}`}
     >
       <h4 className="font-medium text-sm text-neutral-800 line-clamp-2">
         {task.title}

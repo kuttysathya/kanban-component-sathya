@@ -31,3 +31,8 @@ export interface KanbanViewProps {
   onTaskUpdate: (taskId: string, updates: Partial<KanbanTask>) => void;
   onTaskDelete: (taskId: string) => void;
 }
+
+export interface KanbanBoardData {
+  columns: KanbanColumn[];
+  tasks: Record<string, KanbanTask>;
+}
