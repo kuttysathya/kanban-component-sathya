@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type {KanbanTask, KanbanColumn } from "../components/KanbanBoard/KanbanBoard.types";
+import type { KanbanColumn } from "../components/KanbanBoard/KanbanBoard.types";
 
 export interface KanbanBoardData {
   columns: KanbanColumn[];
@@ -11,8 +11,8 @@ export const useKanbanBoard = (initialData: KanbanBoardData) => {
   const [sourceColumnId, setSourceColumnId] = useState<string | null>(null);
   const [overColumnId, setOverColumnId] = useState<string | null>(null);
 
-  const onDragStart = (task: KanbanTask, columnId: string) => {
-    setDraggingTaskId(task.id);
+  const onDragStart = (taskId: string, columnId: string) => {
+    setDraggingTaskId(taskId);
     setSourceColumnId(columnId);
   };
 
@@ -20,38 +20,43 @@ export const useKanbanBoard = (initialData: KanbanBoardData) => {
     setOverColumnId(columnId);
   };
 
-    const onDragLeave = (columnId: string) => {
+  const onDragLeave = (columnId: string) => {
     if (overColumnId === columnId) {
       setOverColumnId(null);
     }
   };
 
     const onDrop = (targetColumnId: string) => {
-    if (!draggingTaskId || !sourceColumnId || targetColumnId === sourceColumnId) return;
+    if (!draggingTaskId  || !sourceColumnId) return;
+    if (targetColumnId === sourceColumnId) return;
 
-    const newColumns = data.columns.map((col) => {
+    const updatedCols = data.columns.map((col) => {
       if (col.id === sourceColumnId) {
-        return { ...col, taskIds: col.taskIds.filter((id) => id !== draggingTaskId) };
+        return { ...col, taskIds: col.taskIds.filter((id) => id !== draggingTaskId ) };
       }
+
       if (col.id === targetColumnId) {
         return { ...col, taskIds: [...col.taskIds, draggingTaskId] };
       }
+
       return col;
     });
 
-    setData({ columns: newColumns });
+    setData({ columns: updatedCols });
+
+    // ✅ Reset drag state
     setDraggingTaskId(null);
     setSourceColumnId(null);
     setOverColumnId(null);
   };
 
   return { 
-    data,
+    data, 
     draggingTaskId,
     overColumnId,
-    onDragStart,
     onDragOver,
     onDragLeave,
-    onDrop, 
+    onDragStart, 
+    onDrop 
   };
 };

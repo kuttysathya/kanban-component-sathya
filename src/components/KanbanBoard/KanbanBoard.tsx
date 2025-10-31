@@ -6,7 +6,7 @@ import { useKanbanBoard } from "../../hooks/useKanbanBoard";
 interface Props {
   columns: ColumnType[];
   tasks: Record<string, KanbanTask>;
-  onDragStart?: (task: KanbanTask, columnId: string) => void;
+  onDragStart?: (taskId: string, columnId: string) => void;
   onDrop?: (columnId: string) => void;
   draggingTaskId?: string | null;
   overColumnId?: string | null;

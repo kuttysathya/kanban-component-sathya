@@ -5,7 +5,7 @@ import type {KanbanColumn as KanbanColumnType, KanbanTask} from "./KanbanBoard.t
 interface Props {
   column: KanbanColumnType;
   tasks: KanbanTask[];
-  onDragStart?: (task: KanbanTask, columnId: string) => void;
+  onDragStart?: (taskId: string, columnId: string) => void;
   onDrop?: (columnId: string) => void;
   onDragOver?: (columnId: string) => void;
   onDragLeave?: (columnId: string) => void;
@@ -20,6 +20,7 @@ const KanbanColumn: React.FC<Props> = ({ column, tasks, onDragStart, onDrop, onD
   
   return (
     <div
+      tabIndex={0}
       className={`min-w-[300px] bg-neutral-50 border border-neutral-200 rounded-xl p-4 shadow-sm 
       mr-4 flex flex-col transition-all hover:shadow-md focus-within:ring-2 focus-within:ring-primary-500
       ${
@@ -28,6 +29,7 @@ const KanbanColumn: React.FC<Props> = ({ column, tasks, onDragStart, onDrop, onD
       `}
       role="region"
       aria-label={`${column.title} column`}
+      aria-dropeffect={isOver ? "move" : undefined}
       onDragOver={(e) => {
         e.preventDefault();
         onDragOver?.(column.id);
@@ -49,7 +51,7 @@ const KanbanColumn: React.FC<Props> = ({ column, tasks, onDragStart, onDrop, onD
               key={task.id}
               task={task}
               columnId={column.id}
-              onDragStart={(t, c) => onDragStart?.(t, c)}
+              onDragStart={onDragStart}
               isDragging={draggingTaskId === task.id}
             />
           ))

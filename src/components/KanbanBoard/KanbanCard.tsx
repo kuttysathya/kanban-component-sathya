@@ -3,7 +3,7 @@ import type { KanbanTask } from "./KanbanBoard.types";
 
 interface Props {
   task: KanbanTask;
-  onDragStart?: (task: KanbanTask, columnId: string) => void;
+  onDragStart?: (taskId: string, columnId: string) => void;
   columnId: string;
   isDragging?: boolean;
 }
@@ -13,14 +13,14 @@ const KanbanCard: React.FC<Props> = ({ task, onDragStart, columnId, isDragging }
   const handleKeyDown = (e: React.KeyboardEvent) => {
   if (e.key === " " || e.key === "Enter") {
     e.preventDefault();
-    onDragStart?.(task, columnId);
+    onDragStart?.(task.id, columnId);
   }
 };
 
   return (
     <div
       draggable
-      onDragStart={() => onDragStart?.(task, columnId)}
+      onDragStart={() => onDragStart?.(task.id, columnId)}
       onKeyDown={handleKeyDown}
       className={`
         bg-white rounded-lg border border-neutral-200 p-3 mb-3 shadow-sm
@@ -33,7 +33,8 @@ const KanbanCard: React.FC<Props> = ({ task, onDragStart, columnId, isDragging }
       `}
       role="button"
       tabIndex={0}
-      aria-label={`${task.title}, priority ${task.priority}`}
+      aria-label={`${task.title}, priority ${task.priority}. Press space or enter to pick up.`}
+      aria-grabbed={isDragging ? "true" : "false"}
     >
       <h4 className="font-medium text-sm text-neutral-800 line-clamp-2">
         {task.title}
