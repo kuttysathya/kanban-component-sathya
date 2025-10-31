@@ -30,3 +30,9 @@ html, body {
   scroll-behavior: smooth;
   background: #f8fafc; /* Tailwind slate-50 */
 }
+
+@layer components {
+  .kanban-placeholder {
+    @apply h-[60px] border-2 border-dashed border-blue-500 rounded-lg bg-blue-50/50;
+  }
+}

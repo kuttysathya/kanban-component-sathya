@@ -1,0 +1,16 @@
+.kanban-placeholder {
+  height: 60px;
+  border: 2px dashed #3b82f6;
+  border-radius: 8px;
+  background: rgba(59,130,246,0.05);
+}
+
+.dragging {
+  opacity: 0.4;
+  transform: scale(0.97) rotate(1deg);
+}
+
+.kanban-column-over {
+  background: #f0f9ff;
+  border-color: #3b82f6;
+}
