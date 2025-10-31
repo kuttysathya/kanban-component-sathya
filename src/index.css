@@ -11,3 +11,22 @@
   box-shadow: 0 0 0 var(--focus-ring);
   border-radius: 6px;
 }
+
+.kanban-dragging {
+  opacity: 0.4 !important;
+  transform: rotate(2deg) scale(0.97);
+  transition: all 0.15s ease-in;
+}
+
+.kanban-placeholder {
+  border: 2px dashed #94a3b8; 
+  background: #f8fafc; 
+  height: 60px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+}
+
+html, body {
+  scroll-behavior: smooth;
+  background: #f8fafc; /* Tailwind slate-50 */
+}
