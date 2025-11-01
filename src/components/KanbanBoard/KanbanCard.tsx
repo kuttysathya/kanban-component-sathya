@@ -1,5 +1,6 @@
 import React from "react";
 import type { KanbanTask } from "./KanbanBoard.types";
+import { Avatar } from "./primitives/Avatar";
 
 interface Props {
   task: KanbanTask;
@@ -9,14 +10,19 @@ interface Props {
   onClick?: () => void;
 }
 
-const KanbanCard: React.FC<Props> = ({ task, onDragStart, columnId, isDragging, onClick }) => {
-
+const KanbanCard: React.FC<Props> = ({
+  task,
+  onDragStart,
+  columnId,
+  isDragging,
+  onClick,
+}) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
-  if (e.key === " " || e.key === "Enter") {
-    e.preventDefault();
-    onDragStart?.(task.id, columnId);
-  }
-};
+    if (e.key === " " || e.key === "Enter") {
+      e.preventDefault();
+      onDragStart?.(task.id, columnId);
+    }
+  };
 
   return (
     <div
@@ -50,17 +56,16 @@ const KanbanCard: React.FC<Props> = ({ task, onDragStart, columnId, isDragging, 
       <div className="flex items-center justify-between mt-2">
         <div className="flex gap-1 flex-wrap">
           {task.tags?.slice(0, 3).map((tag) => (
-            <span key={tag} className="text-[10px] bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded">
+            <span
+              key={tag}
+              className="text-[10px] bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded"
+            >
               {tag}
             </span>
           ))}
         </div>
 
-        {task.assignee && (
-          <div className="w-6 h-6 bg-primary-500 rounded-full text-white text-xs flex items-center justify-center">
-            {task.assignee.charAt(0).toUpperCase()}
-          </div>
-        )}
+        {task.assignee && <Avatar name={task.assignee} className="cursor-pointer" />}
       </div>
 
       {task.dueDate && (
