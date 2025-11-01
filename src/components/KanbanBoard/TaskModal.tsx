@@ -1,5 +1,7 @@
 import React from 'react';
 import type { KanbanTask } from "./KanbanBoard.types";
+import {Modal} from "./primitives/Modal"; 
+import {Button} from "./primitives/Button";
 
 interface TaskModalProps {
   task: KanbanTask | null;
@@ -40,8 +42,7 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onSave }) 
   };
 
   return (
-    <div className="fixed inset-0 bg-black/30 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-[400px] shadow-lg animate-fade-in">
+      <Modal open={isOpen} onClose={onClose}>
         <h2 className="font-semibold text-lg mb-4">Edit Task</h2>
 
         <label className="text-sm font-medium">Title</label>
@@ -80,15 +81,10 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onSave }) 
         />
 
         <div className="flex justify-end gap-2">
-          <button className="px-4 py-2 bg-neutral-200 rounded" onClick={onClose}>
-            Cancel
-          </button>
-          <button className="px-4 py-2 bg-blue-600 text-white rounded" onClick={handleSave}>
-            Save
-          </button>
+          <Button variant="secondary" onClick={onClose}>Cancel</Button>
+          <Button variant="primary" onClick={handleSave}>Save</Button>
         </div>
-      </div>
-    </div>
+      </Modal>
   );
 };
 
