@@ -11,9 +11,10 @@ interface Props {
   onDragLeave?: (columnId: string) => void;
   draggingTaskId?: string | null;
   isOver?: boolean;
+  onTaskClick?: (task: KanbanTask) => void;
 }
 
-const KanbanColumn: React.FC<Props> = ({ column, tasks, onDragStart, onDrop, onDragOver, onDragLeave, draggingTaskId, isOver }) => {
+const KanbanColumn: React.FC<Props> = ({ column, tasks, onDragStart, onDrop, onDragOver, onDragLeave, draggingTaskId, isOver, onTaskClick }) => {
   const handleDrop = () => {
     if (onDrop) onDrop(column.id);
   };
@@ -53,6 +54,7 @@ const KanbanColumn: React.FC<Props> = ({ column, tasks, onDragStart, onDrop, onD
               columnId={column.id}
               onDragStart={onDragStart}
               isDragging={draggingTaskId === task.id}
+              onClick={() => onTaskClick?.(task)}
             />
           ))
         ) : (

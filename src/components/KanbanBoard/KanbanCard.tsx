@@ -6,9 +6,10 @@ interface Props {
   onDragStart?: (taskId: string, columnId: string) => void;
   columnId: string;
   isDragging?: boolean;
+  onClick?: () => void;
 }
 
-const KanbanCard: React.FC<Props> = ({ task, onDragStart, columnId, isDragging }) => {
+const KanbanCard: React.FC<Props> = ({ task, onDragStart, columnId, isDragging, onClick }) => {
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
   if (e.key === " " || e.key === "Enter") {
@@ -22,6 +23,7 @@ const KanbanCard: React.FC<Props> = ({ task, onDragStart, columnId, isDragging }
       draggable
       onDragStart={() => onDragStart?.(task.id, columnId)}
       onKeyDown={handleKeyDown}
+      onClick={onClick}
       className={`
         bg-white rounded-lg border border-neutral-200 p-3 mb-3 shadow-sm
         transition-all cursor-grab active:cursor-grabbing hover:shadow-md active:scale-[0.98] focus-within:ring-2 focus-within:ring-primary-500

@@ -2,17 +2,32 @@ import React from "react";
 import KanbanColumn from "./KanbanColumn";
 import type { KanbanColumn as ColumnType, KanbanTask } from "./KanbanBoard.types";
 import { useKanbanBoard } from "../../hooks/useKanbanBoard";
+import TaskModal from "./TaskModal";
 
 interface Props {
   columns: ColumnType[];
   tasks: Record<string, KanbanTask>;
-  onDragStart?: (taskId: string, columnId: string) => void;
-  onDrop?: (columnId: string) => void;
-  draggingTaskId?: string | null;
-  overColumnId?: string | null;
 }
 
 const KanbanBoard: React.FC<Props> = ({ columns, tasks }) => {
+const [taskState, setTaskState] = React.useState(tasks);
+const [selectedTask, setSelectedTask] = React.useState<KanbanTask | null>(null);
+const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+const handleTaskClick = (task: KanbanTask) => {
+  setSelectedTask(task);
+  setIsModalOpen(true);
+};
+
+ const handleTaskSave = (updatedTask: KanbanTask) => {
+    
+    setTaskState((prev) => ({
+      ...prev,
+      [updatedTask.id]: updatedTask,
+    }));
+    setIsModalOpen(false);
+  };
+
   const {
     data, draggingTaskId, overColumnId,
     onDragStart, onDragOver, onDragLeave, onDrop
@@ -28,16 +43,24 @@ const KanbanBoard: React.FC<Props> = ({ columns, tasks }) => {
           <KanbanColumn
             key={column.id}
             column={column}
-            tasks={column.taskIds.map((id) => tasks[id])}
+            tasks={column.taskIds.map((id) => taskState[id])}     //use updated tasks
             onDragStart={onDragStart}
             onDrop={onDrop}
             onDragOver={onDragOver}
             onDragLeave={onDragLeave}
             draggingTaskId={draggingTaskId}
             isOver={overColumnId === column.id}
+            onTaskClick={handleTaskClick}                     //click to edit
           />
         ))}
       </div>
+
+     <TaskModal
+        task={selectedTask} 
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSave={handleTaskSave}
+      /> 
     </div>
   );
 };
