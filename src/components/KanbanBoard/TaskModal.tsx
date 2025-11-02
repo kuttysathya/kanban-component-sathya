@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 import type { KanbanTask } from "./KanbanBoard.types";
-import {Modal} from "./primitives/Modal"; 
-import {Button} from "./primitives/Button";
+import { Modal } from "./primitives/Modal";
+import { Button } from "./primitives/Button";
 
 interface TaskModalProps {
   task: KanbanTask | null;
@@ -10,8 +10,12 @@ interface TaskModalProps {
   onSave: (updatedTask: KanbanTask) => void;
 }
 
-const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onSave }) => {
-
+const TaskModal: React.FC<TaskModalProps> = ({
+  task,
+  isOpen,
+  onClose,
+  onSave,
+}) => {
   const [title, setTitle] = React.useState<string>(task?.title ?? "");
   const [description, setDescription] = React.useState(task?.description ?? "");
   const [priority, setPriority] = React.useState(task?.priority ?? "low");
@@ -42,49 +46,61 @@ const TaskModal: React.FC<TaskModalProps> = ({ task, isOpen, onClose, onSave }) 
   };
 
   return (
-      <Modal open={isOpen} onClose={onClose}>
-        <h2 className="font-semibold text-lg mb-4">Edit Task</h2>
+    <Modal open={isOpen} onClose={onClose}>
+      <h2 className="font-semibold text-lg mb-4">Edit Task</h2>
 
-        <label className="text-sm font-medium">Title</label>
-        <input
-          className="w-full border p-2 rounded mb-3"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-        />
+      <label className="text-sm font-medium">Title</label>
+      <input
+        className="w-full border p-2 rounded mb-3"
+        value={title}
+        onChange={(e) => setTitle(e.target.value)}
+      />
 
-        <label className="text-sm font-medium">Description</label>
-        <textarea
-          className="w-full border p-2 rounded mb-3"
-          rows={3}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-        />
+      <label className="text-sm font-medium">Description</label>
+      <textarea
+        className="w-full border p-2 rounded mb-3"
+        rows={3}
+        value={description}
+        onChange={(e) => setDescription(e.target.value)}
+      />
 
-        <label className="text-sm font-medium">Priority</label>
-        <select
-          className="w-full border p-2 rounded mb-3"
-          value={priority}
-          onChange={(e) => setPriority(e.target.value as "low" | "medium" | "high" | "urgent")}
-        >
-          <option value="low">Low</option>
-          <option value="medium">Medium</option>
-          <option value="high">High</option>
-          <option value="urgent">Urgent</option>
-        </select>
+      <label className="text-sm font-medium">Priority</label>
+      <select
+        className="w-full border p-2 rounded mb-3"
+        value={priority}
+        onChange={(e) =>
+          setPriority(e.target.value as "low" | "medium" | "high" | "urgent")
+        }
+      >
+        <option value="low">Low</option>
+        <option value="medium">Medium</option>
+        <option value="high">High</option>
+        <option value="urgent">Urgent</option>
+      </select>
 
-        <label className="text-sm font-medium">Due Date</label>
-        <input
-          type="date"
-          className="w-full border p-2 rounded mb-4"
-          value={dueDate}
-          onChange={(e) => setDueDate(e.target.value)}
-        />
+      {task.createdAt && (
+        <p className="text-xs text-neutral-500 mb-2">
+          Created on: {new Date(task.createdAt).toLocaleDateString()}
+        </p>
+      )}
 
-        <div className="flex justify-end gap-2">
-          <Button variant="secondary" onClick={onClose}>Cancel</Button>
-          <Button variant="primary" onClick={handleSave}>Save</Button>
-        </div>
-      </Modal>
+      <label className="text-sm font-medium">Due Date</label>
+      <input
+        type="date"
+        className="w-full border p-2 rounded mb-4"
+        value={dueDate}
+        onChange={(e) => setDueDate(e.target.value)}
+      />
+
+      <div className="flex justify-end gap-2">
+        <Button variant="secondary" onClick={onClose}>
+          Cancel
+        </Button>
+        <Button variant="primary" onClick={handleSave}>
+          Save
+        </Button>
+      </div>
+    </Modal>
   );
 };
 

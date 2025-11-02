@@ -5,6 +5,7 @@ import type { KanbanColumn, KanbanTask } from "./KanbanBoard.types";
 const baseColumns: KanbanColumn[] = [
   { id: "todo", title: "To Do", color: "#ccc", taskIds: ["1", "2"] },
   { id: "progress", title: "In Progress", color: "#ccc", taskIds: ["3"] },
+  { id: "review", title: "Review", color: "#ccc", taskIds: ["4"] },
   { id: "done", title: "Done", color: "#ccc", taskIds: [] },
 ];
 
@@ -14,18 +15,40 @@ const baseTasks: Record<string, KanbanTask> = {
     title: "Design UI mockups",
     status: "todo",
     createdAt: new Date(),
+    priority: "low",
+    assignee: "Amit Kumar",
+    tags: ["docs"],
+    dueDate: new Date(),
   },
   "2": {
     id: "2",
     title: "Setup database schema",
     status: "todo",
     createdAt: new Date(),
+    priority: "medium",
+    assignee: "Amit",
+    tags: ["frontend"],
+    dueDate: new Date(),
   },
   "3": {
     id: "3",
     title: "Implement API",
+    status: "done",
+    createdAt: new Date(),
+    priority: "urgent",
+    assignee: "rahul",
+    tags: ["backend"],
+    dueDate: new Date(),
+  },
+  "4": {
+    id: "4",
+    title: "Code review",
     status: "progress",
     createdAt: new Date(),
+    priority: "high",
+    assignee: "anita",
+    tags: ["critical"],
+    dueDate: new Date(),
   },
 };
 
@@ -103,5 +126,27 @@ export const Playground: Story = {
   },
   parameters: {
     controls: { expanded: true },
+  },
+};
+
+export const PriorityShowcase: Story = {
+  args: {
+    columns: baseColumns,
+    tasks: baseTasks,
+  },
+};
+
+export const KeyboardA11y: Story = {
+  args: {
+    columns: baseColumns,
+    tasks: baseTasks,
+  },
+  parameters: {
+    docs: {
+      description: {
+        story:
+          "Use TAB to move focus. SPACE to pick up a card, arrow keys to move, ENTER to drop.",
+      },
+    },
   },
 };

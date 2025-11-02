@@ -65,8 +65,16 @@ const KanbanCard: React.FC<Props> = ({
           ))}
         </div>
 
-        {task.assignee && <Avatar name={task.assignee} className="cursor-pointer" />}
+        {task.assignee && (
+          <Avatar name={task.assignee} className="cursor-pointer" />
+        )}
       </div>
+
+      {task.createdAt && (
+        <div className="text-[10px] text-neutral-500 mt-2">
+          Created: {new Date(task.createdAt).toLocaleDateString()}
+        </div>
+      )}
 
       {task.dueDate && (
         <div className="text-[10px] text-neutral-500 mt-2">
