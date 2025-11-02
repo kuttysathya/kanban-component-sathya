@@ -8,6 +8,7 @@ interface TaskModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (updatedTask: KanbanTask) => void;
+  onDelete: (taskId: string) => void;
 }
 
 const TaskModal: React.FC<TaskModalProps> = ({
@@ -15,10 +16,12 @@ const TaskModal: React.FC<TaskModalProps> = ({
   isOpen,
   onClose,
   onSave,
+  onDelete,
 }) => {
   const [title, setTitle] = React.useState<string>(task?.title ?? "");
   const [description, setDescription] = React.useState(task?.description ?? "");
   const [priority, setPriority] = React.useState(task?.priority ?? "low");
+  const [status, setStatus] = React.useState("todo");
   const [dueDate, setDueDate] = React.useState<string>(
     task?.dueDate ? task.dueDate.toISOString().split("T")[0] : ""
   );
@@ -28,18 +31,21 @@ const TaskModal: React.FC<TaskModalProps> = ({
       setTitle(task?.title ?? "");
       setDescription(task.description ?? "");
       setPriority(task.priority ?? "low");
+      setStatus(task.status ?? "todo");
       setDueDate(task.dueDate ? task.dueDate.toISOString().split("T")[0] : "");
     }
   }, [task]);
 
-  if (!isOpen || !task) return null;
+  if (!isOpen) return null;
 
   const handleSave = () => {
+    if (!task) return;
     onSave({
       ...task,
       title,
       description,
       priority,
+      status,
       dueDate: dueDate ? new Date(dueDate) : undefined,
     });
     onClose();
@@ -47,7 +53,9 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <h2 className="font-semibold text-lg mb-4">Edit Task</h2>
+      <h2 className="font-semibold text-lg mb-4">
+        {task?.title ? "Edit Task" : "Create Task"}
+      </h2>
 
       <label className="text-sm font-medium">Title</label>
       <input
@@ -78,7 +86,19 @@ const TaskModal: React.FC<TaskModalProps> = ({
         <option value="urgent">Urgent</option>
       </select>
 
-      {task.createdAt && (
+      <label className="text-sm font-medium">Status / Column</label>
+      <select
+        className="w-full border p-2 rounded mb-3"
+        value={status}
+        onChange={(e) => setStatus(e.target.value)}
+      >
+        <option value="todo">To Do</option>
+        <option value="progress">In Progress</option>
+        <option value="review">Review</option>
+        <option value="done">Done</option>
+      </select>
+
+      {task?.createdAt && (
         <p className="text-xs text-neutral-500 mb-2">
           Created on: {new Date(task.createdAt).toLocaleDateString()}
         </p>
@@ -92,13 +112,25 @@ const TaskModal: React.FC<TaskModalProps> = ({
         onChange={(e) => setDueDate(e.target.value)}
       />
 
-      <div className="flex justify-end gap-2">
-        <Button variant="secondary" onClick={onClose}>
-          Cancel
-        </Button>
-        <Button variant="primary" onClick={handleSave}>
-          Save
-        </Button>
+      <div className="flex justify-between mt-3">
+        {task?.id && (
+          <Button
+            variant="secondary"
+            className="text-red-600 border-red-400"
+            onClick={() => onDelete(task.id)}
+          >
+            Delete
+          </Button>
+        )}
+
+        <div className="flex gap-2">
+          <Button variant="secondary" onClick={onClose}>
+            Cancel
+          </Button>
+          <Button variant="primary" onClick={handleSave}>
+            Save
+          </Button>
+        </div>
       </div>
     </Modal>
   );

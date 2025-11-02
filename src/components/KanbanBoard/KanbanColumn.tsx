@@ -1,6 +1,9 @@
 import React from "react";
 import KanbanCard from "./KanbanCard";
-import type {KanbanColumn as KanbanColumnType, KanbanTask} from "./KanbanBoard.types";
+import type {
+  KanbanColumn as KanbanColumnType,
+  KanbanTask,
+} from "./KanbanBoard.types";
 
 interface Props {
   column: KanbanColumnType;
@@ -12,13 +15,25 @@ interface Props {
   draggingTaskId?: string | null;
   isOver?: boolean;
   onTaskClick?: (task: KanbanTask) => void;
+  onAddTask: (columnId: string) => void;
 }
 
-const KanbanColumn: React.FC<Props> = ({ column, tasks, onDragStart, onDrop, onDragOver, onDragLeave, draggingTaskId, isOver, onTaskClick }) => {
+const KanbanColumn: React.FC<Props> = ({
+  column,
+  tasks,
+  onDragStart,
+  onDrop,
+  onDragOver,
+  onDragLeave,
+  draggingTaskId,
+  isOver,
+  onTaskClick,
+  onAddTask,
+}) => {
   const handleDrop = () => {
     if (onDrop) onDrop(column.id);
   };
-  
+
   return (
     <div
       tabIndex={0}
@@ -47,7 +62,9 @@ const KanbanColumn: React.FC<Props> = ({ column, tasks, onDragStart, onDrop, onD
 
       <div className="space-y-3 overflow-y-auto max-h-[70vh] pr-2">
         {tasks.length > 0 ? (
-          tasks.map((task) => (
+          tasks
+          .filter(Boolean)
+          .map((task) => (
             <KanbanCard
               key={task.id}
               task={task}
@@ -62,6 +79,13 @@ const KanbanColumn: React.FC<Props> = ({ column, tasks, onDragStart, onDrop, onD
         )}
 
         {draggingTaskId && isOver && <div className="kanban-placeholder"></div>}
+
+        <button
+          onClick={() => onAddTask(column.id)}
+          className="text-sm text-blue-600 mt-2 hover:text-blue-800"
+        >
+          + Add task
+        </button>
       </div>
     </div>
   );
