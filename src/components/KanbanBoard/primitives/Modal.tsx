@@ -56,6 +56,13 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
     return () => modalEl.removeEventListener("keydown", trap);
   }, [open]);
 
+  useEffect(() => {
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "auto";
+    };
+  }, []);
+
 
   if (!open) return null;
 
@@ -74,6 +81,7 @@ export const Modal: React.FC<ModalProps> = ({ open, onClose, children }) => {
         ref={modalRef}
         className={clsx(
           "bg-white rounded-xl shadow-modal p-6 w-full max-w-md animate-slide-up",
+          "max-h-[90vh] overflow-y-auto",
           "focus-visible:outline-none"
         )}
         onClick={(e) => e.stopPropagation()}

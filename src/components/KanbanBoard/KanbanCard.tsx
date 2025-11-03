@@ -1,6 +1,7 @@
 import React from "react";
 import type { KanbanTask } from "./KanbanBoard.types";
 import { Avatar } from "./primitives/Avatar";
+import { FaComment, FaPaperclip } from "react-icons/fa";
 
 interface Props {
   task: KanbanTask;
@@ -56,6 +57,11 @@ const KanbanCard: React.FC<Props> = ({
     }
   };
 
+  const isOverdue =
+  task.dueDate &&
+  new Date(task.dueDate).setHours(0, 0, 0, 0) <
+    new Date().setHours(0, 0, 0, 0);
+
   return (
     <div
       draggable
@@ -70,7 +76,10 @@ const KanbanCard: React.FC<Props> = ({
         ${task.priority === "urgent" && "border-l-4 border-red-500"}
         ${task.priority === "medium" && "border-l-4 border-yellow-500"}
         ${task.priority === "low" && "border-l-4 border-blue-500"}
-        ${keyboardDrag?.taskId === task.id && "outline outline-2 outline-blue-500"}
+        ${
+          keyboardDrag?.taskId === task.id &&
+          "outline outline-2 outline-blue-500"
+        }
       `}
       role="button"
       tabIndex={0}
@@ -102,6 +111,14 @@ const KanbanCard: React.FC<Props> = ({
           <Avatar name={task.assignee} className="cursor-pointer" />
         )}
       </div>
+      <div className="flex gap-2 mt-1 text-neutral-500 text-[10px]">
+        <div className="flex items-center gap-1">
+          <FaComment /> <span>2</span>
+        </div>
+        <div className="flex items-center gap-1">
+          <FaPaperclip /> <span>1</span>
+        </div>
+      </div>
 
       {task.createdAt && (
         <div className="text-[10px] text-neutral-500 mt-2">
@@ -110,7 +127,13 @@ const KanbanCard: React.FC<Props> = ({
       )}
 
       {task.dueDate && (
-        <div className="text-[10px] text-neutral-500 mt-2">
+        <div
+          className={`text-[10px] mt-2 ${
+            isOverdue
+              ? "text-red-600 font-semibold"
+              : "text-neutral-500"
+          }`}
+        >
           Due: {new Date(task.dueDate).toLocaleDateString()}
         </div>
       )}

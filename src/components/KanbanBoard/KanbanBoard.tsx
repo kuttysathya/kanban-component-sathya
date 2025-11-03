@@ -13,12 +13,19 @@ interface Props {
 }
 
 const KanbanBoard: React.FC<Props> = ({ columns, tasks }) => {
-  const [taskState, setTaskState] = React.useState(tasks);
   const [selectedTask, setSelectedTask] = React.useState<KanbanTask | null>(
     null
   );
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [search, setSearch] = React.useState("");
+  const [taskState, setTaskState] = React.useState(
+    Object.fromEntries(
+      Object.entries(tasks).map(([id, t]) => [
+        id,
+        { ...t, createdAt: new Date(t.createdAt) },
+      ])
+    )
+  );
 
   const handleTaskClick = (task: KanbanTask) => {
     setSelectedTask(task);
@@ -47,16 +54,16 @@ const KanbanBoard: React.FC<Props> = ({ columns, tasks }) => {
   };
 
   const handleAddTask = (columnId: string) => {
-  setSelectedTask({
-    id: Date.now().toString(),
-    title: "",
-    description: "",
-    status: columnId,
-    createdAt: new Date(),
-    priority: "low",
-  });
-  setIsModalOpen(true);
-};
+    setSelectedTask({
+      id: Date.now().toString(),
+      title: "",
+      description: "",
+      status: columnId,
+      createdAt: new Date(),
+      priority: "low",
+    });
+    setIsModalOpen(true);
+  };
 
   const {
     data,
@@ -77,14 +84,28 @@ const KanbanBoard: React.FC<Props> = ({ columns, tasks }) => {
         Kanban Board
       </h2>
 
-      <input
-        placeholder="Search tasks..."
-        className="border rounded px-2 py-1 mb-5 w-3/6"
-        value={search}
-        onChange={(e) => setSearch(e.target.value)}
-      />
+      <div aria-live="assertive" className="sr-only">
+        {draggingTaskId && overColumnId
+          ? `Moving task to ${overColumnId} column`
+          : ""}
+      </div>
 
-      <div className="flex gap-4 overflow-x-auto pb-4">
+      <div className="flex items-center justify-between mb-4 gap-3">
+        <input
+          placeholder="Search tasks..."
+          className="border rounded px-3 py-2 flex-1"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <button
+          onClick={() => handleAddTask("")}
+          className="text-sm bg-blue-600 px-3 py-2 rounded-md text-white hover:bg-blue-700"
+        >
+          + Add task
+        </button>
+      </div>
+
+      <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory scroll-smooth">
         {data.columns.map((column) => {
           const filteredTasks = column.taskIds
             .map((id) => taskState[id])

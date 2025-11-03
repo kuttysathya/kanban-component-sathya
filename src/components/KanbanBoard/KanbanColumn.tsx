@@ -44,7 +44,7 @@ const KanbanColumn: React.FC<Props> = ({
     <div
       tabIndex={0}
       className={`min-w-[300px] bg-neutral-50 border border-neutral-200 rounded-xl p-4 shadow-sm 
-      m-2 flex flex-col transition-all hover:shadow-md focus-within:ring-2 focus-within:ring-primary-500
+      m-2 flex flex-col transition-all hover:shadow-md focus-within:ring-2 focus-within:ring-primary-500 snap-start
       ${
         isOver ? "ring-2 ring-primary-500 bg-neutral-100" : "border-neutral-200"
       }
@@ -59,7 +59,7 @@ const KanbanColumn: React.FC<Props> = ({
       onDragLeave={() => onDragLeave?.(column.id)}
       onDrop={handleDrop}
     >
-      <div className="flex items-center justify-between mb-3">
+      <div className="flex items-center justify-between mb-3 sticky top-0 z-10 bg-neutral-50 py-2">
         <h3 className="font-semibold text-neutral-800 text-sm">
           {column.title}{" "}
           <span className="text-neutral-500 text-xs">({tasks.length})</span>
@@ -84,14 +84,14 @@ const KanbanColumn: React.FC<Props> = ({
             />
           ))
         ) : (
-          <p className="text-xs text-neutral-400 italic">No tasks yet</p>
+          <p className="text-xs text-neutral-500 italic">No tasks yet</p>
         )}
 
         {draggingTaskId && isOver && <div className="kanban-placeholder"></div>}
 
         <button
           onClick={() => onAddTask(column.id)}
-          className="text-sm bg-blue-500 px-2 py-1 rounded-md text-white mt-2 hover:bg-blue-800"
+          className="text-sm text-blue-600 px-2 py-1 rounded-md mt-2 hover:text-blue-700 focus:ring-2 focus:ring-blue-400"
         >
           + Add task
         </button>
