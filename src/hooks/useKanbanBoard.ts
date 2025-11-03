@@ -11,9 +11,18 @@ export const useKanbanBoard = (initialData: KanbanBoardData) => {
   const [sourceColumnId, setSourceColumnId] = useState<string | null>(null);
   const [overColumnId, setOverColumnId] = useState<string | null>(null);
 
+  const [keyboardDrag, setKeyboardDrag] = useState<{
+    taskId: string | null;
+    columnId: string | null;
+  }>({
+    taskId: null,
+    columnId: null,
+  });
+
   const onDragStart = (taskId: string, columnId: string) => {
     setDraggingTaskId(taskId);
     setSourceColumnId(columnId);
+    setKeyboardDrag({ taskId, columnId });
   };
 
   const onDragOver = (columnId: string) => {
@@ -48,6 +57,68 @@ export const useKanbanBoard = (initialData: KanbanBoardData) => {
     setDraggingTaskId(null);
     setSourceColumnId(null);
     setOverColumnId(null);
+    setKeyboardDrag({ taskId: null, columnId: null });
+  };
+
+  const moveTaskKeyboard = (taskId: string, columnId: string, direction: "up" | "down" | "left" | "right") => {
+    const colIndex = data.columns.findIndex(c => c.id === columnId);
+    const column = data.columns[colIndex];
+    const taskIndex = column.taskIds.indexOf(taskId);
+
+    // Inside same column
+    if (direction === "up" && taskIndex > 0) {
+      const updated = [...column.taskIds];
+      updated.splice(taskIndex, 1);
+      updated.splice(taskIndex - 1, 0, taskId);
+
+      const updatedCols = [...data.columns];
+      updatedCols[colIndex] = { ...column, taskIds: updated };
+
+      setData({ columns: updatedCols });
+    }
+
+    if (direction === "down" && taskIndex < column.taskIds.length - 1) {
+      const updated = [...column.taskIds];
+      updated.splice(taskIndex, 1);
+      updated.splice(taskIndex + 1, 0, taskId);
+
+      const updatedCols = [...data.columns];
+      updatedCols[colIndex] = { ...column, taskIds: updated };
+
+      setData({ columns: updatedCols });
+    }
+
+    // Move across columns
+    if (direction === "left" && colIndex > 0) {
+      const prevCol = data.columns[colIndex - 1];
+      const updatedSource = column.taskIds.filter(id => id !== taskId);
+      const updatedTarget = [...prevCol.taskIds, taskId];
+
+      const updatedCols = [...data.columns];
+      updatedCols[colIndex] = { ...column, taskIds: updatedSource };
+      updatedCols[colIndex - 1] = { ...prevCol, taskIds: updatedTarget };
+
+      setData({ columns: updatedCols });
+      setKeyboardDrag({ taskId, columnId: prevCol.id });
+    }
+
+    if (direction === "right" && colIndex < data.columns.length - 1) {
+      const nextCol = data.columns[colIndex + 1];
+      const updatedSource = column.taskIds.filter(id => id !== taskId);
+      const updatedTarget = [...nextCol.taskIds, taskId];
+
+      const updatedCols = [...data.columns];
+      updatedCols[colIndex] = { ...column, taskIds: updatedSource };
+      updatedCols[colIndex + 1] = { ...nextCol, taskIds: updatedTarget };
+
+      setData({ columns: updatedCols });
+      setKeyboardDrag({ taskId, columnId: nextCol.id });
+    }
+  };
+
+  const cancelKeyboardDrag = () => {
+    setKeyboardDrag({ taskId: null, columnId: null });
+    setDraggingTaskId(null);
   };
 
   return { 
@@ -57,6 +128,9 @@ export const useKanbanBoard = (initialData: KanbanBoardData) => {
     onDragOver,
     onDragLeave,
     onDragStart, 
-    onDrop 
+    onDrop,
+    keyboardDrag,
+    moveTaskKeyboard,
+    cancelKeyboardDrag
   };
 };

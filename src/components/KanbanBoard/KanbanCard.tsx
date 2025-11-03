@@ -5,22 +5,54 @@ import { Avatar } from "./primitives/Avatar";
 interface Props {
   task: KanbanTask;
   onDragStart?: (taskId: string, columnId: string) => void;
+  moveTaskKeyboard?: (
+    taskId: string,
+    columnId: string,
+    dir: "up" | "down" | "left" | "right"
+  ) => void;
+  cancelKeyboardDrag?: () => void;
   columnId: string;
   isDragging?: boolean;
   onClick?: () => void;
+  keyboardDrag?: { taskId: string | null; columnId: string | null };
 }
 
 const KanbanCard: React.FC<Props> = ({
   task,
   onDragStart,
+  moveTaskKeyboard,
+  cancelKeyboardDrag,
   columnId,
   isDragging,
   onClick,
+  keyboardDrag,
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === " " || e.key === "Enter") {
       e.preventDefault();
       onDragStart?.(task.id, columnId);
+      return;
+    }
+    if (isDragging) {
+      if (e.key === "ArrowUp") {
+        e.preventDefault();
+        moveTaskKeyboard?.(task.id, columnId, "up");
+      }
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        moveTaskKeyboard?.(task.id, columnId, "down");
+      }
+      if (e.key === "ArrowLeft") {
+        e.preventDefault();
+        moveTaskKeyboard?.(task.id, columnId, "left");
+      }
+      if (e.key === "ArrowRight") {
+        e.preventDefault();
+        moveTaskKeyboard?.(task.id, columnId, "right");
+      }
+      if (e.key === "Escape") {
+        cancelKeyboardDrag?.();
+      }
     }
   };
 
@@ -38,6 +70,7 @@ const KanbanCard: React.FC<Props> = ({
         ${task.priority === "urgent" && "border-l-4 border-red-500"}
         ${task.priority === "medium" && "border-l-4 border-yellow-500"}
         ${task.priority === "low" && "border-l-4 border-blue-500"}
+        ${keyboardDrag?.taskId === task.id && "outline outline-2 outline-blue-500"}
       `}
       role="button"
       tabIndex={0}
@@ -85,4 +118,4 @@ const KanbanCard: React.FC<Props> = ({
   );
 };
 
-export default KanbanCard;
+export default React.memo(KanbanCard);

@@ -16,6 +16,9 @@ interface Props {
   isOver?: boolean;
   onTaskClick?: (task: KanbanTask) => void;
   onAddTask: (columnId: string) => void;
+  keyboardDrag?: { taskId: string | null; columnId: string | null };
+  moveTaskKeyboard?: (taskId: string, columnId: string, direction: "up" | "down" | "left" | "right") => void;
+  cancelKeyboardDrag?: () => void;
 }
 
 const KanbanColumn: React.FC<Props> = ({
@@ -29,6 +32,9 @@ const KanbanColumn: React.FC<Props> = ({
   isOver,
   onTaskClick,
   onAddTask,
+  moveTaskKeyboard,
+  cancelKeyboardDrag,
+  keyboardDrag
 }) => {
   const handleDrop = () => {
     if (onDrop) onDrop(column.id);
@@ -38,7 +44,7 @@ const KanbanColumn: React.FC<Props> = ({
     <div
       tabIndex={0}
       className={`min-w-[300px] bg-neutral-50 border border-neutral-200 rounded-xl p-4 shadow-sm 
-      mr-4 flex flex-col transition-all hover:shadow-md focus-within:ring-2 focus-within:ring-primary-500
+      m-2 flex flex-col transition-all hover:shadow-md focus-within:ring-2 focus-within:ring-primary-500
       ${
         isOver ? "ring-2 ring-primary-500 bg-neutral-100" : "border-neutral-200"
       }
@@ -69,9 +75,12 @@ const KanbanColumn: React.FC<Props> = ({
               key={task.id}
               task={task}
               columnId={column.id}
+              moveTaskKeyboard={moveTaskKeyboard}
+              cancelKeyboardDrag={cancelKeyboardDrag}
               onDragStart={onDragStart}
               isDragging={draggingTaskId === task.id}
               onClick={() => onTaskClick?.(task)}
+              keyboardDrag={keyboardDrag}
             />
           ))
         ) : (
@@ -82,7 +91,7 @@ const KanbanColumn: React.FC<Props> = ({
 
         <button
           onClick={() => onAddTask(column.id)}
-          className="text-sm text-blue-600 mt-2 hover:text-blue-800"
+          className="text-sm bg-blue-500 px-2 py-1 rounded-md text-white mt-2 hover:bg-blue-800"
         >
           + Add task
         </button>

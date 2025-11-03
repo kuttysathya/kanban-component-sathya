@@ -53,9 +53,13 @@ const TaskModal: React.FC<TaskModalProps> = ({
 
   return (
     <Modal open={isOpen} onClose={onClose}>
-      <h2 className="font-semibold text-lg mb-4">
+      <h2 id="modal-title" className="font-semibold text-lg mb-4">
         {task?.title ? "Edit Task" : "Create Task"}
       </h2>
+
+      <div id="modal-description" className="sr-only">
+        Fill form fields to create or edit a task. Press Escape to close modal.
+      </div>
 
       <label className="text-sm font-medium">Title</label>
       <input

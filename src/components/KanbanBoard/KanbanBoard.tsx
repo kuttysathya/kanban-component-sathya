@@ -66,6 +66,9 @@ const KanbanBoard: React.FC<Props> = ({ columns, tasks }) => {
     onDragOver,
     onDragLeave,
     onDrop,
+    keyboardDrag,
+    moveTaskKeyboard,
+    cancelKeyboardDrag,
   } = useKanbanBoard({ columns });
 
   return (
@@ -103,6 +106,9 @@ const KanbanBoard: React.FC<Props> = ({ columns, tasks }) => {
                 isOver={overColumnId === column.id}
                 onTaskClick={handleTaskClick}
                 onAddTask={handleAddTask}
+                keyboardDrag={keyboardDrag}
+                moveTaskKeyboard={moveTaskKeyboard}
+                cancelKeyboardDrag={cancelKeyboardDrag}
               />
             </div>
           );
