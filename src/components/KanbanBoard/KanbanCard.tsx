@@ -1,7 +1,7 @@
 import React from "react";
 import type { KanbanTask } from "./KanbanBoard.types";
 import { Avatar } from "./primitives/Avatar";
-import { FaComment, FaPaperclip } from "react-icons/fa";
+import { FaComment, FaPaperclip, FaTrash } from "react-icons/fa";
 
 interface Props {
   task: KanbanTask;
@@ -16,6 +16,9 @@ interface Props {
   isDragging?: boolean;
   onClick?: () => void;
   keyboardDrag?: { taskId: string | null; columnId: string | null };
+  selectedTasks?: string[];
+  toggleTaskSelect?: (taskId: string) => void;
+  onDeleteTask?: (taskId: string) => void;
 }
 
 const KanbanCard: React.FC<Props> = ({
@@ -27,6 +30,9 @@ const KanbanCard: React.FC<Props> = ({
   isDragging,
   onClick,
   keyboardDrag,
+  onDeleteTask = () => {},
+  selectedTasks = [],
+  toggleTaskSelect = () => {},
 }) => {
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === " " || e.key === "Enter") {
@@ -58,9 +64,9 @@ const KanbanCard: React.FC<Props> = ({
   };
 
   const isOverdue =
-  task.dueDate &&
-  new Date(task.dueDate).setHours(0, 0, 0, 0) <
-    new Date().setHours(0, 0, 0, 0);
+    task.dueDate &&
+    new Date(task.dueDate).setHours(0, 0, 0, 0) <
+      new Date().setHours(0, 0, 0, 0);
 
   return (
     <div
@@ -69,7 +75,7 @@ const KanbanCard: React.FC<Props> = ({
       onKeyDown={handleKeyDown}
       onClick={onClick}
       className={`
-        bg-white rounded-lg border border-neutral-200 p-3 mb-3 shadow-sm
+        relative group bg-white rounded-lg border border-neutral-200 p-3 mb-3 shadow-sm
         transition-all cursor-grab active:cursor-grabbing hover:shadow-md active:scale-[0.98] focus-within:ring-2 focus-within:ring-primary-500
         ${isDragging ? "opacity-40 scale-[0.98] rotate-[1deg] shadow-lg" : ""}
         ${task.priority === "high" && "border-l-4 border-orange-500"}
@@ -81,62 +87,94 @@ const KanbanCard: React.FC<Props> = ({
           "outline outline-2 outline-blue-500"
         }
       `}
-      role="button"
-      tabIndex={0}
-      aria-label={`${task.title}, priority ${task.priority}. Press space or enter to pick up.`}
-      aria-grabbed={isDragging ? "true" : "false"}
     >
-      <h4 className="font-medium text-sm text-neutral-800 line-clamp-2">
-        {task.title}
-      </h4>
-      {task.description && (
-        <p className="text-xs text-neutral-500 line-clamp-2">
-          {task.description}
-        </p>
-      )}
+      <label className="absolute top-2 left-2 flex items-center gap-1 z-10 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={selectedTasks.includes(task.id)}
+          onChange={(e) => {
+            e.stopPropagation();
+            toggleTaskSelect(task.id);
+          }}
+          className="h-4 w-4"
+          aria-label="Select task"
+        />
+      </label>
 
-      <div className="flex items-center justify-between mt-2">
-        <div className="flex gap-1 flex-wrap">
-          {task.tags?.slice(0, 3).map((tag) => (
-            <span
-              key={tag}
-              className="text-[10px] bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded"
-            >
-              {tag}
-            </span>
-          ))}
+      <div className="absolute top-2 right-2 flex gap-2">
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onClick?.();
+          }}
+          aria-label="Edit task"
+          className="text-neutral-500 hover:text-blue-600"
+        >
+          ✏️
+        </button>
+
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onDeleteTask(task.id);
+          }}
+          aria-label="Delete task"
+          className="text-neutral-500 hover:text-red-600"
+        >
+          <FaTrash />
+        </button>
+      </div>
+      <div onClick={onClick} className="cursor-pointer pr-6">
+        <h4 className="font-medium text-sm text-neutral-800 line-clamp-2 mt-5">
+          {task.title}
+        </h4>
+        {task.description && (
+          <p className="text-xs text-neutral-500 line-clamp-2">
+            {task.description}
+          </p>
+        )}
+
+        <div className="flex items-center justify-between mt-2">
+          <div className="flex gap-1 flex-wrap">
+            {task.tags?.slice(0, 3).map((tag) => (
+              <span
+                key={tag}
+                className="text-[10px] bg-neutral-100 text-neutral-600 px-2 py-0.5 rounded"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
+
+          {task.assignee && (
+            <Avatar name={task.assignee} className="cursor-pointer" />
+          )}
+        </div>
+        <div className="flex gap-2 mt-1 text-neutral-500 text-[10px]">
+          <div className="flex items-center gap-1">
+            <FaComment /> <span>2</span>
+          </div>
+          <div className="flex items-center gap-1">
+            <FaPaperclip /> <span>1</span>
+          </div>
         </div>
 
-        {task.assignee && (
-          <Avatar name={task.assignee} className="cursor-pointer" />
+        {task.createdAt && (
+          <div className="text-[10px] text-neutral-500 mt-2">
+            Created: {new Date(task.createdAt).toLocaleDateString()}
+          </div>
+        )}
+
+        {task.dueDate && (
+          <div
+            className={`text-[10px] mt-2 ${
+              isOverdue ? "text-red-600 font-semibold" : "text-neutral-500"
+            }`}
+          >
+            Due: {new Date(task.dueDate).toLocaleDateString()}
+          </div>
         )}
       </div>
-      <div className="flex gap-2 mt-1 text-neutral-500 text-[10px]">
-        <div className="flex items-center gap-1">
-          <FaComment /> <span>2</span>
-        </div>
-        <div className="flex items-center gap-1">
-          <FaPaperclip /> <span>1</span>
-        </div>
-      </div>
-
-      {task.createdAt && (
-        <div className="text-[10px] text-neutral-500 mt-2">
-          Created: {new Date(task.createdAt).toLocaleDateString()}
-        </div>
-      )}
-
-      {task.dueDate && (
-        <div
-          className={`text-[10px] mt-2 ${
-            isOverdue
-              ? "text-red-600 font-semibold"
-              : "text-neutral-500"
-          }`}
-        >
-          Due: {new Date(task.dueDate).toLocaleDateString()}
-        </div>
-      )}
     </div>
   );
 };

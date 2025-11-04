@@ -16,6 +16,7 @@ export interface KanbanColumn {
   color: string;
   taskIds: string[];
   maxTasks?: number;
+  limit?: number; 
 }
 
 export interface KanbanViewProps {
