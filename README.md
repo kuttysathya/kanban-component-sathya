@@ -31,8 +31,6 @@ Built from scratch with modern frontend standards — drag & drop, accessibility
 
 - TaskModal manages task create/edit/delete
 
-- zustand manages global board state
-
 - Custom HTML5 drag-and-drop logic (no pre-built kanban or DnD libs)
 
 - Key principles followed:
@@ -94,8 +92,6 @@ Built from scratch with modern frontend standards — drag & drop, accessibility
 - Tailwind CSS
 
 - Storybook
-
-- Zustand
 
 - date-fns
 
